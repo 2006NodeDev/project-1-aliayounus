@@ -4,7 +4,7 @@ import { UserDTOtoUserConvertor } from "../utils/UserDTO-to-User-convertor";
 import { UserNotFoundError } from "../errors/UserNotFoundError";
 import { User } from "../models/User";
 import { AuthFailureError} from '../errors/AuthFailureError'
-//import { UserUserInputError } from "../errors/UserUserInputError";
+import { UserUserInputError } from "../errors/UserUserInputError";
 //import { roles } from "../models/roles";
 
 // Get All user 
@@ -97,42 +97,42 @@ export async function getUserByUsernameAndPassword(username:string, password:str
 }
 
 
-// // save one user
-// export async function saveOneUser(newUser:User):Promise<User>{
-//     let client:PoolClient
-//     try{
-//         client = await connectionPool.connect()
-//         client.query('BEGIN;')//start a transaction
-//         // if you have multiple querys, you should make a transaction
-//         // await client.query('BEGIN;')//start a transaction
-//         // let roleId = await client.query(`select r."role_id" from project_1.roles r where r."role" = $1`, [newUser.role])
-//         // if(roleId.rowCount === 0){
-//         //     throw new Error('Role Not Found')
-//         // }
+ // save one user
+export async function saveOneUser(newUser:User):Promise<User>{
+    let client:PoolClient
+    try{
+        client = await connectionPool.connect()
+        client.query('BEGIN;')//start a transaction
+        // if you have multiple querys, you should make a transaction
+        // await client.query('BEGIN;')//start a transaction
+        // let roleId = await client.query(`select r."role_id" from project_1.roles r where r."role" = $1`, [newUser.role])
+        // if(roleId.rowCount === 0){
+        //     throw new Error('Role Not Found')
+        // }
 
-//     //    roleId = roleId.rows[0].role_id
-//         let results = await client.query(`insert into project_1.users ("username", "password","firstname","lastname","email","role")
-//                                             values($1,$2,$3,$4,$5,$6) returning "user_id" `,//allows you to return some values from the rows in an insert, update or delete
-//                                             [newUser.username, newUser.password,newUser.firstname,newUser.lastname, newUser.email, newUser.role])
-//         newUser.userId = results.rows[0].user_id
-//         await client.query('COMMIT;')//ends transaction
-//         return newUser
+    //    roleId = roleId.rows[0].role_id
+        let results = await client.query(`insert into project_1.users ("user_id","username", "password","firstname","lastname","email","role")
+                                            values($1,$2,$3,$4,$5,$6,$7) returning "user_id" `,//allows you to return some values from the rows in an insert, update or delete
+                                            [newUser.userId,newUser.username, newUser.password,newUser.firstname,newUser.lastname, newUser.email, newUser.role])
+        newUser.userId = results.rows[0].user_id
+        await client.query('COMMIT;')//ends transaction
+        return newUser
 
-//     }catch(e){
-//         client && client.query('ROLLBACK;')//if a js error takes place, undo the sql
-//         if(e.message === 'Role Not Found'){
-//             throw new UserUserInputError()// role not found error
-//         }
-//         //if we get an error we don't know 
-//         console.log(e)
-//         throw new Error('Unhandled Error Occured')
-//     }finally{
-//         client && client.release();
-//     }
-// }
+    }catch(e){
+        client && client.query('ROLLBACK;')//if a js error takes place, undo the sql
+        if(e.message === 'Role Not Found'){
+            throw new UserUserInputError()// role not found error
+        }
+        //if we get an error we don't know 
+        console.log(e)
+        throw new Error('Unhandled Error Occured')
+    }finally{
+        client && client.release();
+    }
+}
 
 
-//-------------------------------------------------------
+
 
 
 
