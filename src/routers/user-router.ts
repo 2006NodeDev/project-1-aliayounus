@@ -1,6 +1,6 @@
 import express, { Request, Response, NextFunction } from 'express'
 import { authenticationMiddleware } from '../middleware/authentication-middleware'
-import { getAllUsers, getUserById, UpdateUser, saveOneUser } from '../daos/user-dao'
+import { getAllUsers, getUserById, UpdateUser, saveOneUser, deleteUserById } from '../daos/user-dao'
 import { authorizationMiddleware } from '../middleware/authorization-middleware'
 import { UserUserInputError } from '../errors/UserUserInputError'
 import { User } from '../models/User'
@@ -117,3 +117,28 @@ userRouter.patch('/', authorizationMiddleware(['Admin']), async (req: Request, r
 
 //Delete user
 
+
+userRouter.delete('/:id',authorizationMiddleware(['Admin']), async (req: Request, res: Response, next: NextFunction) => {
+    let { id } = req.params
+    if (isNaN(+id)) {
+        // send a response telling them they need to give us a number
+        res.status(400).send('Id needs to be a number')
+    } else {
+        try {
+            let deleteUser = await deleteUserById(+id)
+
+    
+
+            res.send('User info is deleted, +id')
+            res.json(deleteUser)
+
+          // needs to have the updated userId
+
+        } catch (e)
+         {
+
+            
+            next(e)
+        }
+    }
+})

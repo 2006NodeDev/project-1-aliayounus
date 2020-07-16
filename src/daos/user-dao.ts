@@ -163,6 +163,40 @@ export async function UpdateUser(UserUpdate: User) {
 }
 
    
+// Delete user by Id
+
+//Get user by Id
+export async function deleteUserById(id: number):Promise<User> {
+    let client: PoolClient
+    try {
+        //get a connection
+        client = await connectionPool.connect()
+        //send the query
+        
+        
+        //let results = await client.query('Delete from  project_1.users u where u."user_id"= $1;',[id])
+        
+        let results = await client.query('Delete from  project_1.users u where u."user_id"= $1;',[id])
+
+
+        if(results.rowCount === 0){
+            throw new Error('User Not Found')
+        }
+        return UserDTOtoUserConvertor(results.rows[0])//there should only ever be one row
+    } catch (e) {
+        if(e.message === 'User Not Found'){
+            throw new UserNotFoundError()
+        }
+        //if we get an error we don't know 
+        console.log(e)
+        throw new Error('Unhandled Error Occured')
+    } finally {
+        //let the connectiopn go back to the pool
+        client && client.release()
+    }
+}
+
+
 
 
 
