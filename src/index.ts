@@ -4,6 +4,7 @@ import { userRouter } from './routers/user-router'
 import { sessionMiddleware } from './middleware/session-middleware'
 import { BadCredentialsError } from './errors/BadCredentialsError'
 import { getUserByUsernameAndPassword } from './daos/user-dao'
+import { corsFilter } from './middleware/cors-filter'
 
 
 
@@ -19,9 +20,11 @@ app.use(loggingMiddleware)
 
 app.use(sessionMiddleware)
 
-
+app.use(corsFilter)
 
 app.use('/users', userRouter)
+
+
 
 
 
@@ -63,6 +66,7 @@ app.use((err, req, res, next) => {
         res.status(500).send('Oops, Something went wrong')
     }
 })
+
 
 
 app.listen(2005, () => {
